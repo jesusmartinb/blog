@@ -1,4 +1,4 @@
-const { getAll } = require('../models/autor.model');
+const { getAll, create } = require('../models/autor.model');
 
 // Obtener todos los registros
 // GET /api/autores
@@ -32,12 +32,22 @@ const one = (req, res) => {
 
 // Insertar un nuevo registro
 // POST /api/autores
-const register = (req, res) => {
-	console.log(req.body);
-	return res.status(200).send({
-		status: "success",
-		message: "Registro de un nuevo autor"
-	});
+const register = async (req, res) => {
+	try {
+		const [autor] = await create(req.body);
+		if (![autor]) return res.status(404).json({
+			status: "error",
+			msg: "No se ha podido insertar el autor"
+		})
+
+		return res.status(200).json({
+			status: "success",
+			msg: "Autor registrado en la base de datos",
+			autor
+		})
+	} catch (error) {
+		throw new Error(error);
+	}
 }
 
 // Actualizar un registro
