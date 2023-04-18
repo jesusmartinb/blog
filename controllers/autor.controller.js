@@ -1,10 +1,23 @@
+const { getAll } = require('../models/autor.model');
+
 // Obtener todos los registros
 // GET /api/autores
-const all = (req, res) => {
-	return res.status(200).send({
-		status: "success",
-		message: "Listado de autores"
-	});
+const all = async (req, res) => {
+	try {
+		const autores = await getAll();
+		if (!autores[0]) return res.status(404).json({
+			status: "error",
+			msg: "No se han encontrado autores"
+		})
+
+		return res.status(200).json({
+			status: "success",
+			msg: "Listado de autores",
+			autores: autores[0]
+		})
+	} catch (error) {
+		throw new Error(error)
+	}
 }
 
 // Obtener un registro
