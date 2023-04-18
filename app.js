@@ -7,6 +7,9 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const apiRouter = require('./routes/api');
 
+// Conectamos con la base de datos
+require('./database/dbConfig');
+
 const app = express();
 
 app.use(logger('dev'));
