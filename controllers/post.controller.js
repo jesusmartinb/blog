@@ -1,4 +1,4 @@
-const { getAll, create } = require('../models/post.model');
+const { getAll, create, getAllPostsByAuthor, getOneAuthor } = require('../models/post.model');
 
 // Obtener todos los registros
 // GET /api/autores
@@ -20,14 +20,32 @@ const all = async (req, res) => {
 	}
 }
 
-// Obtener un registro
+// Obtener un registro de autor y todos sus posts
 // GET /api/autores/:id
-const one = (req, res) => {
+const one = async (req, res) => {
 	const { id } = req.params;
-	return res.status(200).send({
-		status: "success",
-		message: `Lista el post con ID: ${id}`
-	});
+
+	try {
+
+		const autor = await getOneAuthor(id);
+
+		const postsAutor = await getAllPostsByAuthor(id);
+
+		if (!autor[0]) return res.status(404).json({
+			status: "error",
+			msg: "No hemos encontrado ningún autor con ese ID"
+		})
+
+		return res.status(200).json({
+			status: "success",
+			msg: `autor con el ID: ${id}`,
+			autor: autor[0],
+			postsAutor: postsAutor[0]
+		})
+	} catch (error) {
+		throw new Error(error)
+	}
+
 }
 
 // Insertar un nuevo registro
