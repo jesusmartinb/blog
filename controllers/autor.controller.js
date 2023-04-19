@@ -4,8 +4,8 @@ const { getAll, create, getAllPostsByAuthor, getOneAuthor } = require('../models
 // GET /api/autores
 const all = async (req, res) => {
 	try {
-		const autores = await getAll();
-		if (!autores[0]) return res.status(404).json({
+		const [autores] = await getAll();
+		if (!autores) return res.status(404).json({
 			status: "error",
 			msg: "No se han encontrado autores"
 		})
@@ -13,10 +13,10 @@ const all = async (req, res) => {
 		return res.status(200).json({
 			status: "success",
 			msg: "Listado de autores",
-			autores: autores[0]
+			autores
 		})
 	} catch (error) {
-		throw new Error(error)
+		res.json({ fatal: error.message })
 	}
 }
 
@@ -27,11 +27,11 @@ const one = async (req, res) => {
 
 	try {
 
-		const autor = await getOneAuthor(id);
+		const [autor] = await getOneAuthor(id);
 
-		const postsAutor = await getAllPostsByAuthor(id);
+		const [postsAutor] = await getAllPostsByAuthor(id);
 
-		if (!autor[0]) return res.status(404).json({
+		if (!autor) return res.status(404).json({
 			status: "error",
 			msg: "No hemos encontrado ningún autor con ese ID"
 		})
@@ -39,11 +39,11 @@ const one = async (req, res) => {
 		return res.status(200).json({
 			status: "success",
 			msg: `autor con el ID: ${id}`,
-			autor: autor[0],
-			postsAutor: postsAutor[0]
+			autor,
+			postsAutor
 		})
 	} catch (error) {
-		throw new Error(error)
+		res.json({ fatal: error.message })
 	}
 
 }
@@ -53,7 +53,7 @@ const one = async (req, res) => {
 const register = async (req, res) => {
 	try {
 		const [autor] = await create(req.body);
-		if (![autor]) return res.status(404).json({
+		if (!autor) return res.status(404).json({
 			status: "error",
 			msg: "No se ha podido insertar el autor"
 		})
@@ -64,7 +64,7 @@ const register = async (req, res) => {
 			autor
 		})
 	} catch (error) {
-		throw new Error(error);
+		res.json({ fatal: error.message })
 	}
 }
 

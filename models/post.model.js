@@ -7,6 +7,10 @@ const getAll = () => {
 	return db.query("select p.titulo, p.descripcion, p.fecha_creacion as 'fecha creación', p.categoria, a.nombre as 'autor', a.email, a.imagen from blog_unir.posts as p, blog_unir.autores as a where p.fk_autores = a.id");
 }
 
+const getById = (postId) => {
+	return db.query('select * from posts where id = ?', [postId]);
+}
+
 // Creación de un nuevo registro de post
 // insert into posts (titulo, descripcion, fecha_creacion, categoria, fk_autores) values (?, ?, ?, ?, ?)
 const create = ({ titulo, descripcion, fecha_creacion = new Date(), categoria, fk_autores }) => {
@@ -20,5 +24,6 @@ const create = ({ titulo, descripcion, fecha_creacion = new Date(), categoria, f
 
 module.exports = {
 	getAll,
+	getById,
 	create
 }

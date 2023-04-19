@@ -1,11 +1,11 @@
-const { getAll, create } = require('../models/post.model');
+const { getAll, create, getById } = require('../models/post.model');
 
 // Obtener todos los registros
-// GET /api/autores
+// GET /api/posts
 const all = async (req, res) => {
 	try {
-		const posts = await getAll();
-		if (!posts[0]) return res.status(404).json({
+		const [posts] = await getAll();
+		if (!posts) return res.status(404).json({
 			status: "error",
 			msg: "No se han encontrado posts"
 		})
@@ -13,21 +13,35 @@ const all = async (req, res) => {
 		return res.status(200).json({
 			status: "success",
 			msg: "Listado de posts",
-			posts: posts[0]
+			posts
 		})
 	} catch (error) {
-		throw new Error(error)
+		res.json({ fatal: error.message })
 	}
 }
 
 // Obtener un registro
-// GET /api/autores/:id
-const one = (req, res) => {
+// GET /api/posts/:id
+const one = async (req, res) => {
 	const { id } = req.params;
-	return res.status(200).send({
-		status: "success",
-		message: `Lista el autor con ID: ${id}`
-	});
+
+	try {
+		const [post] = await getById(id);
+		if (!post && post.length === 0) {
+			return res.status(404).json({
+				status: "error",
+				msg: "No hemos encontrado ningún post con ese ID"
+			})
+		}
+
+		return res.status(200).json({
+			status: "success",
+			msg: `post con el ID: ${id}`,
+			post: post[0]
+		})
+	} catch (error) {
+		res.json({ fatal: error.message })
+	}
 }
 
 // Insertar un nuevo registro
