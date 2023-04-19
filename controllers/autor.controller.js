@@ -1,4 +1,4 @@
-const { getAll, create, getAllPostsByAuthor, getOneAuthor, updateById } = require('../models/autor.model');
+const { getAll, create, getAllPostsByAuthor, getOneAuthor, updateById, deleteById } = require('../models/autor.model');
 
 // Obtener todos los registros
 // GET /api/autores
@@ -79,7 +79,7 @@ const update = async (req, res) => {
 			status: "error",
 			msg: `No se ha encontrado el autor con ID: ${id}`
 		})
-		return res.status(200).send({
+		return res.status(200).json({
 			status: "success",
 			msg: `Actualización del autor con ID: ${id}`,
 			autor: autor[0]
@@ -92,12 +92,24 @@ const update = async (req, res) => {
 
 // Eliminar un registro
 // DELETE /api/autores/:id
-const erase = (req, res) => {
+const erase = async (req, res) => {
 	const { id } = req.params;
-	return res.status(200).send({
-		status: "success",
-		msg: `Eliminación del autor con ID: ${id}`
-	});
+	try {
+		const [autor] = await getOneAuthor(id);
+		await deleteById(id);
+		if (!autor) return res.status(404).json({
+			status: "error",
+			msg: `No se ha encontrado el autor con ID: ${id}`
+		})
+		return res.status(200).json({
+			status: "success",
+			msg: `Eliminación del autor con ID: ${id}`,
+			autor: autor[0]
+		});
+	} catch (error) {
+		res.json({ error: error.message })
+	}
+
 }
 
 module.exports = {

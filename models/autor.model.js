@@ -31,10 +31,16 @@ const updateById = (id, { nombre, email, imagen }) => {
 	)
 }
 
+// Borrado de un autor
+const deleteById = (id) => {
+	return db.query('delete from autores where id = ?', [id])
+}
+
 module.exports = {
 	getAll,
 	getOneAuthor,
 	getAllPostsByAuthor,
 	create,
-	updateById
+	updateById,
+	deleteById
 }
