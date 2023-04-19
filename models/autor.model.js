@@ -23,9 +23,18 @@ const create = ({ nombre, email, imagen = 'images/default.jpg' }) => {
 	)
 }
 
+// Actualización completa de un registro de autor
+const updateById = (id, { nombre, email, imagen }) => {
+	return db.query(
+		'update autores set nombre = ?, email = ?, imagen = ? where id = ?',
+		[nombre, email, imagen, id]
+	)
+}
+
 module.exports = {
 	getAll,
 	getOneAuthor,
 	getAllPostsByAuthor,
-	create
+	create,
+	updateById
 }
