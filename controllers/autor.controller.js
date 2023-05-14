@@ -5,7 +5,7 @@ const { getAll, create, getAllPostsByAuthor, getOneAuthor, updateById, deleteByI
 const all = async (req, res) => {
 	try {
 		const [autores] = await getAll();
-		if (!autores) return res.status(404).json({
+		if (autores.length === 0) return res.status(404).json({
 			status: "error",
 			msg: "No se han encontrado autores"
 		})
@@ -31,7 +31,7 @@ const one = async (req, res) => {
 
 		const [postsAutor] = await getAllPostsByAuthor(id);
 
-		if (!autor) return res.status(404).json({
+		if (autor.length === 0) return res.status(404).json({
 			status: "error",
 			msg: "No hemos encontrado ningún autor con ese ID"
 		})
@@ -52,8 +52,9 @@ const one = async (req, res) => {
 // POST /api/autores
 const register = async (req, res) => {
 	try {
-		const [autor] = await create(req.body);
-		if (!autor) return res.status(404).json({
+		const [result] = await create(req.body);
+		const [autor] = await getOneAuthor(result.insertId)
+		if (autor.length === 0) return res.status(404).json({
 			status: "error",
 			msg: "No se ha podido insertar el autor"
 		})
@@ -75,7 +76,7 @@ const update = async (req, res) => {
 	try {
 		await updateById(id, req.body);
 		const [autor] = await getOneAuthor(id);
-		if (!autor) return res.status(404).json({
+		if (autor.length === 0) return res.status(404).json({
 			status: "error",
 			msg: `No se ha encontrado el autor con ID: ${id}`
 		})
@@ -97,7 +98,7 @@ const erase = async (req, res) => {
 	try {
 		const [autor] = await getOneAuthor(id);
 		await deleteById(id);
-		if (!autor) return res.status(404).json({
+		if (autor.length === 0) return res.status(404).json({
 			status: "error",
 			msg: `No se ha encontrado el autor con ID: ${id}`
 		})

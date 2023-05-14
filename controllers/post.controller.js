@@ -1,11 +1,11 @@
-const { getAll, create, getById } = require('../models/post.model');
+const { getAll, create, getById, updateById, deleteById } = require('../models/post.model');
 
 // Obtener todos los registros
 // GET /api/posts
 const all = async (req, res) => {
 	try {
 		const [posts] = await getAll();
-		if (!posts) return res.status(404).json({
+		if (posts.length === 0) return res.status(404).json({
 			status: "error",
 			msg: "No se han encontrado posts"
 		})
@@ -27,7 +27,7 @@ const one = async (req, res) => {
 
 	try {
 		const [post] = await getById(id);
-		if (!post && post.length === 0) {
+		if (post.length === 0) {
 			return res.status(404).json({
 				status: "error",
 				msg: "No hemos encontrado ningún post con ese ID"
@@ -45,11 +45,12 @@ const one = async (req, res) => {
 }
 
 // Insertar un nuevo registro
-// POST /api/autores
+// POST /api/posts
 const register = async (req, res) => {
 	try {
-		const [post] = await create(req.body);
-		if (![post]) return res.status(404).json({
+		const [result] = await create(req.body);
+		const [post] = await getById(result.insertId);
+		if (post.length === 0) return res.status(404).json({
 			status: "error",
 			msg: "No se ha podido insertar el post"
 		})
@@ -65,23 +66,49 @@ const register = async (req, res) => {
 }
 
 // Actualizar un registro
-// PUT /api/autores/:id
-const update = (req, res) => {
+// PUT /api/posts/:id
+const update = async (req, res) => {
 	const { id } = req.params;
-	return res.status(200).send({
-		status: "success",
-		message: `Actualización del post con ID: ${id}`
-	});
+
+	try {
+		await updateById(id, req.body);
+		const [post] = await getById(id);
+		if (post.length === 0) return res.status(404).json({
+			status: "error",
+			msg: `No se ha encontrado en post con ID: ${id}`
+		})
+
+		return res.status(200).json({
+			status: "success",
+			msg: `Actualización del post con ID: ${id}`,
+			post: post[0]
+		})
+	} catch (error) {
+		res.json({ error: error.message })
+	}
+
 }
 
 // Eliminar un registro
-// DELETE /api/autores/:id
-const erase = (req, res) => {
+// DELETE /api/posts/:id
+const erase = async (req, res) => {
 	const { id } = req.params;
-	return res.status(200).send({
-		status: "success",
-		message: `Eliminación del post con ID: ${id}`
-	});
+	try {
+		const [post] = await getById(id);
+		await deleteById(id);
+		if (post.length === 0) return res.status(404).json({
+			status: "error",
+			msg: `No se ha encontrado el post con ID: ${id}`
+		})
+		return res.status(200).json({
+			status: "success",
+			msg: `Eliminación del post con ID: ${id}`,
+			post: post[0]
+		});
+	} catch (error) {
+		res.json({ error: error.message })
+	}
+
 }
 
 module.exports = {

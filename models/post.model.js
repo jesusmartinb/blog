@@ -22,8 +22,23 @@ const create = ({ titulo, descripcion, fecha_creacion = new Date(), categoria, f
 	)
 }
 
+// Actualización completa de un registro de posts
+const updateById = (id, { titulo, descripcion, fecha_creacion, categoria, fk_autores }) => {
+	return db.query(
+		'update posts set titulo = ?, descripcion = ?, fecha_creacion = ?, categoria = ?, fk_autores = ? where id = ?',
+		[titulo, descripcion, fecha_creacion, categoria, fk_autores, id]
+	)
+}
+
+// Borrado de un post
+const deleteById = (id) => {
+	return db.query('delete from posts where id = ?', [id])
+}
+
 module.exports = {
 	getAll,
 	getById,
-	create
+	create,
+	updateById,
+	deleteById
 }
