@@ -1,0 +1,61 @@
+@host = http://localhost:3000
+
+GET {{host}}/api/autores
+
+###
+GET {{host}}/api/autores/4
+
+###
+POST {{host}}/api/autores
+Content-Type: application/json
+
+{
+	"nombre": "Ricardo Fuentes Lain",
+	"email": "ricardo.fuentes@gmail.com",
+	"imagen": "images/ricardo_fuentes.jpg"
+}
+
+###
+PUT {{host}}/api/autores/1
+Content-Type: application/json
+
+{
+	"nombre": "Jesús M. Martín Blanco",
+	"email": "jesusmaria.martin@gmail.com",
+	"imagen": "images/jesus_martin.jpg"
+}
+
+###
+DELETE {{host}}/api/autores/7
+
+###
+GET {{host}}/api/posts/
+
+###
+GET {{host}}/api/posts/6
+
+###
+POST {{host}}/api/posts
+Content-Type: application/json
+
+{
+	"titulo": "Rio rojo",
+	"descripcion": "Pasea tranquilamente por la orilla del ...",
+	"categoria": "Ensayo",
+	"fk_autores": 4
+}
+
+###
+PUT {{host}}/api/posts/11
+Content-Type: application/json
+
+{
+	"titulo": "Rio Bravo",
+	"descripcion": "Pasea tranquilamente por la orilla del ...",
+	"fecha_creacion": "2023-04-18",
+	"categoria": "Ensayo",
+	"fk_autores": 4
+}
+
+###
+DELETE {{host}}/api/posts/7
